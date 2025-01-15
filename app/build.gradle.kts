@@ -5,7 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.bluetoothcontroll"
-    compileSdk = 34
+    compileSdk = 35
+
+
+    buildFeatures{
+        viewBinding = true;
+    }
 
     defaultConfig {
         applicationId = "com.example.bluetoothcontroll"
