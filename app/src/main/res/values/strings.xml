@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BluetoothControll</string>
+    <string name="Bt_connect">connect</string>
+    <string name="Bt_search">search</string>
+    <string name="Bt_change">change</string>
+    <string name="Bt_no_connection">not connected</string>
 </resources>

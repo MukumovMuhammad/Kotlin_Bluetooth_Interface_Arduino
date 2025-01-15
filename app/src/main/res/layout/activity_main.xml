@@ -7,32 +7,53 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/lv_devices"
-        android:layout_width="0dp"
-        android:layout_height="316dp"
-        android:layout_margin="10dp"
-        app:layout_constraintBottom_toTopOf="@id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.562"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
-    <Button
-        android:id="@+id/btn_search_bt_devices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="10dp"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:layout_margin="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline2" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_Bt_ic"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_bt_no_connected"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/device_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
+            android:text="@string/Bt_no_connection"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_connect"
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="@string/Bt_connect"
+            android:background="@drawable/bt_enable_status_bg"
+            android:textColor="@android:color/white"
+            android:padding="1dp"
+            android:textSize="20sp"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
