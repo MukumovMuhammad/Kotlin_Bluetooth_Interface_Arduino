@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bluetoothcontroll.Data.BluetoothDevices
 import com.example.bluetoothcontroll.databinding.ActivityBluetoothConnectionBinding
 import com.example.bluetoothcontroll.databinding.ActivityMainBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
@@ -35,9 +36,11 @@ class BluetoothConnection : AppCompatActivity() {
         private const val BtTag = "BT_INFO"
     }
 
+    private lateinit var adapter : BluetoothRvAdapter;
     private lateinit var BtDevices: ArrayList<BluetoothDevices>
     private lateinit var binding : ActivityBluetoothConnectionBinding
     private lateinit var bluetoothAdapter: BluetoothAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,8 @@ class BluetoothConnection : AppCompatActivity() {
             insets
         }
 
+        requestBluetoothPermissions()
+
         val BtGreyStatus = ContextCompat.getDrawable(this, R.drawable.bt_disable_status_bg)
         val BtGreenStatus = ContextCompat.getDrawable(this@BluetoothConnection, R.drawable.bt_enable_status_bg)
 
@@ -64,41 +69,33 @@ class BluetoothConnection : AppCompatActivity() {
         }
 
 
-        if (!bluetoothAdapter.isEnabled){
-
-            Log.d(BtTag, "Bluetooth is not enabled")
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            startActivityForResult(enableBtIntent, REQUES_ENABLE_BT)
-        }
-
-
 
         BtDevices = ArrayList<BluetoothDevices>()
         binding.rvBtDevices.layoutManager = LinearLayoutManager(this);
-        binding.rvBtDevices.adapter = BluetoothRvAdapter(BtDevices)
+
+        adapter = BluetoothRvAdapter(BtDevices)
+        binding.rvBtDevices.adapter = adapter
 
         binding.btnSearchBtDevices.setOnClickListener {
-            binding.btnSearchBtDevices.background = BtGreyStatus
+            requestBluetoothPermissions()
+//            binding.btnSearchBtDevices.background = BtGreyStatus
             binding.btnSearchBtDevices.isEnabled = false;
 
+            binding.btnSearchBtDevices.text = "Scanning..."
+
             Log.d(BtTag, "Search button clicked")
-            val discoverDevicesIntent = IntentFilter(BluetoothDevice.ACTION_FOUND)
-            registerReceiver(receiver, discoverDevicesIntent)
-            bluetoothAdapter.startDiscovery()
+            val discoverDevicesIntent = IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(receiver, discoverDevicesIntent);
+            bluetoothAdapter.startDiscovery();
+
 
             lifecycleScope.launch {
                 Log.d(BtTag, "Lifecycle scope launched")
-                Thread.sleep(10000);
+                delay(20000);
                 Log.d(BtTag, "Thread sleep finished")
                 StopSearch();
-                binding.btnSearchBtDevices.background = BtGreenStatus
+                binding.btnSearchBtDevices.text = "Scan Devices"
+//                binding.btnSearchBtDevices.background = BtGreenStatus
                 binding.btnSearchBtDevices.isEnabled = true;
             }
 
@@ -143,7 +140,7 @@ class BluetoothConnection : AppCompatActivity() {
                 if (BtDeviceDontContain(device?.name.toString())) {
                     Log.d(BtTag, "Device added to list: ${device?.name}")
                     BtDevices.add(BluetoothDevices(device?.name.toString(), device?.address.toString()))
-                    binding.rvBtDevices.adapter?.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged();
                 }
 
             }
@@ -173,6 +170,17 @@ class BluetoothConnection : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun StopSearch(){
         bluetoothAdapter.cancelDiscovery()
-        unregisterReceiver(receiver)
     }
+
+
+    private fun requestBluetoothPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUES_ENABLE_BT)
+        }
+    }
+
 }
